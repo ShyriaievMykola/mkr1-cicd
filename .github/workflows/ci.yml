@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Lint with flake8 (PEP8) and generate HTML report
+        run: |
+          mkdir -p reports/flake8-report
+          flake8 src tests --format=html --htmldir=reports/flake8-report
+
+      - name: Upload flake8 HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flake8-html-report
+          path: reports/flake8-report
+          if-no-files-found: warn
+
+      - name: Run tests and generate HTML report
+        run: |
+          mkdir -p reports
+          pytest --html=reports/pytest-report.html --self-contained-html
+
+      - name: Upload pytest HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-html-report
+          path: reports/pytest-report.html
+          if-no-files-found: warn
