@@ -38,6 +38,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Run tests and generate HTML report
+        if: always()
         run: |
           mkdir -p reports
           pytest --html=reports/pytest-report.html --self-contained-html
