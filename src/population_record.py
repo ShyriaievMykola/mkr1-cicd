@@ -3,7 +3,6 @@
 from dataclasses import dataclass
 
 
-
 @dataclass(frozen=True)
 class CountryPopulationRecord:
     """Зберігає дані про населення країни за конкретний рік."""
